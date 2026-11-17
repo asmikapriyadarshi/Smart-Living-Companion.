@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Living Companion</title>
+
+    <!-- MQTT WebSocket Library -->
+    <script src="https://unpkg.com/paho-mqtt@1.1.0/paho-mqtt-min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div>
+            <h1>🏠 Smart Living Companion</h1>
+            <p>IoT-Based Room Monitoring & Automation System</p>
+        </div>
+
+        <div class="connection-box">
+            <span id="connectionDot" class="status-dot"></span>
+
+            <div>
+                <small>MQTT STATUS</small>
+                <strong id="connection">Connecting...</strong>
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+
+
+        <!-- OVERVIEW -->
+        <section class="section">
+
+            <div class="section-title">
+                <div>
+                    <h2>Room Overview</h2>
+                    <p>Live environmental monitoring</p>
+                </div>
+
+                <div class="live-badge">
+                    ● LIVE
+                </div>
+            </div>
+
+
+            <!-- SENSOR CARDS -->
+            <div class="cards">
+
+
+                <!-- DHT11 TEMPERATURE -->
+                <div class="card temperature-card">
+
+                    <div class="card-top">
+                        <div class="icon">🌡️</div>
+
+                        <span class="sensor-name">
+                            DHT11
+                        </span>
+                    </div>
+
+                    <h3>Room Temperature</h3>
+
+                    <div class="value" id="dhtTemperature">
+                        --°C
+                    </div>
+
+                    <div class="card-status" id="dhtStatus">
+                        DHT11 Sensor
+                    </div>
+
+                </div>
+
+
+                <!-- HUMIDITY -->
+                <div class="card humidity-card">
+
+                    <div class="card-top">
+                        <div class="icon">💧</div>
+
+                        <span class="sensor-name">
+                            DHT11
+                        </span>
+                    </div>
+
+                    <h3>Room Humidity</h3>
+
+                    <div class="value" id="humidity">
+                        --%
+                    </div>
+
+                    <div class="progress">
+                        <div id="humidityBar"></div>
+                    </div>
+
+                    <div class="card-status" id="humidityStatus">
+                        Waiting for data
+                    </div>
+
+                </div>
+
+
+                <!-- LM35 -->
+                <div class="card lm35-card">
+
+                    <div class="card-top">
+                        <div class="icon">🌡️</div>
+
+                        <span class="sensor-name">
+                            LM35
+                        </span>
+                    </div>
+
+                    <h3>LM35 Temperature Reference</h3>
+
+                    <div class="value" id="lm35Temperature">
+                        --°C
+                    </div>
+
+                    <div class="card-status" id="lm35Status">
+                        LM35 Analog Sensor
+                    </div>
+
+                </div>
+
+
+                <!-- IR -->
+                <div class="card ir-card">
+
+                    <div class="card-top">
+                        <div class="icon">👁️</div>
+
+                        <span class="sensor-name">
+                            IR SENSOR
+                        </span>
+                    </div>
+
+                    <h3>Object Detection</h3>
+
+                    <div class="big-status" id="irStatus">
+                        Waiting...
+                    </div>
+
+                    <div class="card-status">
+                        Infrared monitoring
+                    </div>
+
+                </div>
+
+
+                <!-- VIBRATION -->
+                <div class="card vibration-card">
+
+                    <div class="card-top">
+                        <div class="icon">📳</div>
+
+                        <span class="sensor-name">
+                            VIBRATION
+                        </span>
+                    </div>
+
+                    <h3>Vibration Activity</h3>
+
+                    <div class="big-status" id="vibrationStatus">
+                        Waiting...
+                    </div>
+
+                    <div class="card-status">
+                        Vibration monitoring
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHART -->
+        <section class="chart-section">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>📊 Room Temperature Trend (DHT11)</h2>
+                    <p>Real-time DHT11 temperature history</p>
+                </div>
+
+                <div class="chart-value">
+                    <span id="currentTemperature">
+                        --°C
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="chart-container">
+
+                <canvas id="temperatureChart"></canvas>
+
+            </div>
+
+        </section>
+
+
+        <!-- SYSTEM INFORMATION -->
+        <section class="system-section">
+
+            <h2>📡 System Information</h2>
+
+            <div class="system-grid">
+
+                <div class="info-box">
+
+                    <span>MQTT Broker</span>
+
+                    <strong>
+                        broker.hivemq.com
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>MQTT Topic</span>
+
+                    <strong>
+                        smartlivingcompanion/room1/sensors
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>Update Interval</span>
+
+                    <strong>
+                        2 seconds
+                    </strong>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>Last Update</span>
+
+                    <strong id="lastUpdate">
+                        Waiting...
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>
+            Smart Living Companion
+            <span>•</span>
+            ESP32 + MQTT + HiveMQ
+        </p>
+
+        <p class="footer-small">
+            IoT Room Monitoring System
+        </p>
+
+    </footer>
+
+
+    <!-- CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
